@@ -1,0 +1,55 @@
+---
+title: "Evaluate Runs Per Game Consistency for each MLB Team"
+output: html_notebook
+---
+
+load the necessary packages
+```{r}
+library(baseballr)
+library(ggplot2)
+library(ggrepel)
+```
+
+get team data for each team
+```{r}
+Teams = c("LAA","ARI","ATL","BAL","BOS","CHC","CHW","CIN","CLE","COL","DET","MIA","HOU","KCR","LAD","MIL","MIN","NYM","NYY","OAK","PHI","PIT","SDP","SEA","SFG","STL","TBR","TEX","TOR","WSN")
+
+All_data = list()
+
+for(i in 1:30){
+All_data[[length(All_data)+1]] = list(bref_team_results(Teams[i],2022))
+}
+
+```
+
+
+Calculate Runs per game for each team and the volatility of the runs per game
+```{r}
+Vol_data = data.frame(R_avg = numeric(length = 30),R_STDev = numeric(length = 30),R_Vol = numeric(length = 30),R_Vol_minus = numeric(length = 30), R_plus = numeric(length = 30))
+row.names(Vol_data) = Teams
+
+for(j in 1:30){
+  Vol_data$R_avg[j] = mean(All_data[[j]][[1]]$R)
+  Vol_data$R_STDev[j] = sd(All_data[[j]][[1]]$R)
+  Vol_data$R_Vol[j] = Vol_data$R_STDev[j]/Vol_data$R_avg[j]
+  
+  
+}
+
+for(k in 1:30){
+  Vol_data$R_Vol_minus[k] = Vol_data$R_Vol[k]/mean(Vol_data$R_Vol)
+  Vol_data$R_plus[k] = Vol_data$R_avg[k]/mean(Vol_data$R_avg)
+}
+
+
+
+```
+
+plot the results
+```{r}
+png(file = "./RunVol_20220628.png", height = 500, width = 1000)
+ggplot(data = Vol_data, aes(R_Vol_minus,R_plus, label = row.names(Vol_data))) + geom_point() + geom_text_repel() + geom_vline(xintercept = 1) + geom_hline(yintercept = 1) + geom_text(label = "Scores A lot Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) + geom_text(label = "Scores A lot Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) + geom_text(label = "Scores Less Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus))+ geom_text(label = "Scores Less Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus)) + ylab("R/Game +") + xlab("R/Game Volatility -")
+dev.off()
+```
+
+
