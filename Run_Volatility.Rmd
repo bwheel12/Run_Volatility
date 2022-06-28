@@ -48,7 +48,13 @@ for(k in 1:30){
 plot the results
 ```{r}
 png(file = "./RunVol_20220628.png", height = 500, width = 1000)
-ggplot(data = Vol_data, aes(R_Vol_minus,R_plus, label = row.names(Vol_data))) + geom_point() + geom_text_repel() + geom_vline(xintercept = 1) + geom_hline(yintercept = 1) + geom_text(label = "Scores A lot Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) + geom_text(label = "Scores A lot Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) + geom_text(label = "Scores Less Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus))+ geom_text(label = "Scores Less Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus)) + ylab("R/Game +") + xlab("R/Game Volatility -")
+ggplot(data = Vol_data, aes(R_Vol_minus,R_plus, label = row.names(Vol_data))) + 
+  geom_point() + geom_text_repel() + geom_vline(xintercept = 1) + geom_hline(yintercept = 1) + 
+  geom_text(label = "Scores A lot Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) +
+  geom_text(label = "Scores A lot Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =0.95*max(Vol_data$R_plus)) + 
+  geom_text(label = "Scores Less Regularly", x = 1.05*(min(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus)) +
+  geom_text(label = "Scores Less Randomly", x = 0.95*(max(Vol_data$R_Vol_minus)), y =1.05*min(Vol_data$R_plus)) + 
+  ylab("R/Game +") + xlab("R/Game Volatility -")
 dev.off()
 ```
 
